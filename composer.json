@@ -1,0 +1,34 @@
+{
+  "name": "t-regx/pattern-helpers",
+  "type": "library",
+  "description": "Set of global helper functions for Pattern and regular expressions",
+  "license": "MIT",
+  "keywords": [
+    "helper",
+    "helpers",
+    "function",
+    "functions",
+    "pcre",
+    "t-regx",
+    "tregx",
+    "regex",
+    "regexp",
+    "regular",
+    "expression",
+    "pattern",
+    "patterns",
+    "pattern-helper",
+    "pattern-helpers",
+    "match",
+    "search",
+    "preg",
+    "split",
+    "prepared",
+    "prepared patterns",
+    "delimiter",
+    "delimiters"
+  ],
+  "require": {
+    "php": ">=7.1.0"
+  }
+}
