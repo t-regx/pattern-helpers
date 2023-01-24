@@ -2,10 +2,13 @@
 namespace Test\Unit\pattern;
 
 use PHPUnit\Framework\TestCase;
+use Test\Fixtures\TestCasePasses;
 use TRegx\CleanRegex\Pattern;
 
 class Test extends TestCase
 {
+    use TestCasePasses;
+
     /**
      * @test
      */
@@ -64,10 +67,5 @@ class Test extends TestCase
     private function assertClassEquals(Pattern $pattern, string $expectedClassname): void
     {
         $this->assertSame($expectedClassname, \get_class($pattern));
-    }
-
-    private function pass()
-    {
-        $this->assertTrue(true);
     }
 }
