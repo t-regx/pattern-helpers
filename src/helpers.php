@@ -1,6 +1,7 @@
 <?php
 
 use TRegx\CleanRegex\Match\Detail;
+use TRegx\CleanRegex\Match\Stream;
 use TRegx\CleanRegex\Pattern;
 
 if (!function_exists('pattern')) {
@@ -47,6 +48,11 @@ function pattern_match_ref(string $pattern, string $subject, ?Detail &$refDetail
 function pattern_match_all(string $pattern, string $subject, string $modifiers = ''): array
 {
     return Pattern::of($pattern, $modifiers)->match($subject)->all();
+}
+
+function pattern_stream(string $pattern, string $subject, string $modifiers = ''): Stream
+{
+    return Pattern::of($pattern, $modifiers)->match($subject)->stream();
 }
 
 function pattern_replace(string $pattern, string $subject, string $replacement, string $modifiers = ''): string
