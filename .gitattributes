@@ -1,3 +1,5 @@
 /.gitignore export-ignore
 /.gitattributes export-ignore
 /test export-ignore
+/ReadMe.md export-ignore
+/t.regx.png export-ignore
