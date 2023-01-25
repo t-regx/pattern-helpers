@@ -1,0 +1,94 @@
+name: build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - develop
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+
+    container:
+      image: shivammathur/node:latest-${{ matrix.arch }}
+
+    strategy:
+      matrix:
+        include:
+          - php-version: 7.1
+            coverage: none
+            arch: "amd64"
+          - php-version: 7.2
+            coverage: none
+            arch: "amd64"
+          - php-version: 7.3
+            coverage: none
+            arch: "amd64"
+          - php-version: 7.4
+            coverage: none
+            arch: "amd64"
+          - php-version: 8.0
+            coverage: xdebug
+            arch: "amd64"
+          - php-version: 8.0
+            coverage: none
+            arch: "i386"
+          - php-version: 8.1
+            coverage: none
+            arch: "amd64"
+          - php-version: 8.2
+            coverage: none
+            arch: "amd64"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+          coverage: "${{ matrix.coverage }}"
+
+      - name: Cache dependencies installed with Composer
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/composer
+          key: php${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: php${{ matrix.php-version }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress
+
+      - name: Install "covers-ignore"
+        if: "${{ matrix.coverage != 'none' }}"
+        run: composer require --dev rawr/covers-ignore:0.10
+
+      - name: Remove @covers annotations
+        if: "${{ matrix.coverage != 'none' }}"
+        run: ./vendor/bin/covers-ignore test
+
+      - name: Run tests
+        run: ./vendor/bin/phpunit test
+
+      - name: Install "php-coveralls/php-coveralls"
+        if: "${{ matrix.coverage != 'none' }}"
+        run: composer require php-coveralls/php-coveralls --no-progress
+
+      - name: Upload coverage results to Coveralls
+        if: "${{ matrix.coverage != 'none' }}"
+        continue-on-error: true
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git config --global --add safe.directory /__w/pattern-helpers/pattern-helpers && ./vendor/bin/php-coveralls --coverage_clover=build/logs/clover.xml -v
+
+      - name: Upload coverage results to Code Climate
+        if: "${{ matrix.coverage != 'none' }}"
+        uses: paambaati/codeclimate-action@v3.0.0
+        continue-on-error: true
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORTER_ID }}
